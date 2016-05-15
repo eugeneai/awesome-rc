@@ -1,6 +1,11 @@
 #!/bin/bash
 RC=rc.lua
 OUT=/etc/xdg/awesome/$RC
-meld $RC $OUT
-git add $RC
+git checkout main
+cp -f $OUT ./
+git commit -m "Update." -a
+git checkout master
+git merge main -m "Merge with upstream."
+git mergetool
+
 
