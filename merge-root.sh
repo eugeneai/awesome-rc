@@ -6,6 +6,6 @@ cp -f $OUT ./
 git commit -m "Update." -a
 git checkout master
 git merge main -m "Merge with upstream."
-git mergetool
+git mergetool --tool=meld
 
 
