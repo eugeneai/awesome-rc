@@ -44,6 +44,7 @@ beautiful.init(awful.util.get_themes_dir() .. "default/theme.lua")
 -- theme.wallpaper = "/home/eugeneai/code-wallpaper.jpeg"
 -- theme.wallpaper = "/home/eugeneai/code-wallpaper-15.jpg"
 -- This is used later as the default terminal and editor to run.
+-- terminal = "lxterminal"
 terminal = "terminator"
 -- terminal = "gnome-terminal"
 -- terminal = "tilda"
@@ -53,8 +54,7 @@ browser  = "firefox"
 browser2  = "firefox-nightly"
 gbrowser  = "google-chrome-stable"
 qbrowser  = "qupzilla"
--- editor = os.getenv("EDITOR") or "emacsclient -c "
-editor = os.getenv("EDITOR") or "emacs "
+editor = os.getenv("EDITOR") or "emacsclient -c --alternate-editor='emacs'"
 filemanager = "pcmanfm"
 -- editor_cmd = terminal .. " -e " .. editor
 editor_cmd = editor
@@ -75,6 +75,7 @@ awful.layout.layouts = {
     awful.layout.suit.floating,
     awful.layout.suit.tile,
     awful.layout.suit.tile.left,
+    awful.layout.suit.corner.nw,
     -- awful.layout.suit.tile.bottom,
     -- awful.layout.suit.tile.top,
     -- awful.layout.suit.fair,
@@ -138,14 +139,14 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal },
-                                    { "browser", browser },
-                                    { "browser-N", browser2 },
-                                    { "chrome", gbrowser },
-                                    { "q-zilla", qbrowser },
-                                    { "editor", editor_cmd},
+                                    { "open terminal - CR", terminal },
+                                    { "browser - b", browser },
+                                    { "browser - N", browser2 },
+                                    { "chrome - g", gbrowser },
+                                    { "q-zilla - q", qbrowser },
+                                    { "editor - e", editor_cmd},
                                     { "vncviewer", vnc_cmd},
-                                    { "file namager", filemanager},
+                                    { "file namager - i", filemanager},
                                     { "xkill", xkill_cmd},
                                     { "htop", terminal_cmd .. "htop" }
                                   }
@@ -163,7 +164,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock()
+mytextclock = awful.widget.textclock()
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -244,7 +245,7 @@ awful.screen.connect_for_each_screen(function(s)
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibar({ position = "top", screen = s })
+    mywibox[s] = awful.wibox({ position = "top", screen = s })
 
     -- Add widgets to the wibox
     mywibox[s]:setup {
@@ -387,8 +388,7 @@ clientkeys = awful.util.table.join(
         function (c)
             c.fullscreen = not c.fullscreen
             c:raise()
-        end,
-        {description = "toggle fullscreen", group = "client"}),
+        end),
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
@@ -593,6 +593,7 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
 vicious = require("vicious")
 -- Initialize widget
 datewidget = wibox.widget.textbox()
@@ -616,12 +617,16 @@ memwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10,0 }, stops = {
                     {1, "#FF5656"}}})
 -- Register widget
 vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
-
+awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1280x1024 --left-of HDMI1")
+-- awful.util.spawn_with_shell("sleep $[ ( $RANDOM % 10 )  + 1 ]s ; guake -g 0")
+-- awful.util.spawn_with_shell("synergys")
+awful.util.spawn_with_shell("mate-volume-control-applet")
 -- awful.util.spawn_with_shell("xinput set-button-map 8 1 6 3 4 5 2 7 8 9")
 -- awful.util.spawn_with_shell("guake ")
 -- awful.util.spawn_with_shell("altyo -f --id=org.gtk.altyo.main")
 -- awful.util.spawn_with_shell("dropboxd")
 -- awful.util.spawn_with_shell("owncloud")
 -- awful.util.spawn_with_shell("emacs --daemon")
+-- awful.util.spawn_with_shell("altyo -f --id=org.gtk.altyo.main")
 -- awful.util.spawn_with_shell(terminal, 1)
 -- awful.util.spawn_with_shell("sleep 30s; pidgin", 9)
