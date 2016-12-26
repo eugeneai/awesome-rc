@@ -110,8 +110,8 @@ kbdcfg.widget:buttons(
 )
 
 -- Alt + Right Shift switches the current keyboard layout
-awful.key({ "Mod1" }, "Shift_L", function () kbdcfg.switch() end)
-awful.key({ "Mod2" }, "Shift_R", function () kbdcfg.switch() end)
+-- awful.key({ "Mod1" }, "Shift_L", function () kbdcfg.switch() end)
+-- awful.key({ "Mod2" }, "Shift_R", function () kbdcfg.switch() end)
 
 -- {{{ Helper functions
 local function client_menu_toggle_fn()
@@ -135,7 +135,7 @@ myawesomemenu = {
    { "manual", terminal .. " -e man awesome" },
    { "edit config", editor_cmd .. " " .. awesome.conffile },
    { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end}
+   { "quit", awesome.quit }
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
@@ -167,7 +167,11 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 mytextclock = wibox.widget.textclock()
 
 -- Create a wibox for each screen and add it
-local taglist_buttons = awful.util.table.join(
+mywibox = {}
+mypromptbox = {}
+mylayoutbox = {}
+mytaglist = {}
+mytaglist.buttons = awful.util.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
                     awful.button({ modkey }, 1, function(t)
                                               if client.focus then
@@ -184,7 +188,8 @@ local taglist_buttons = awful.util.table.join(
                     awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
                 )
 
-local tasklist_buttons = awful.util.table.join(
+mytasklist = {}
+mytasklist.buttons = awful.util.table.join(
                      awful.button({ }, 1, function (c)
                                               if c == client.focus then
                                                   c.minimized = true
@@ -232,40 +237,40 @@ awful.screen.connect_for_each_screen(function(s)
     awful.tag({ "1t", "2e", "3o", "4w", "5", "6m", "7", "8", "9i" }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
-    s.mypromptbox = awful.widget.prompt()
+    mypromptbox[s] = awful.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(awful.util.table.join(
+    mylayoutbox[s] = awful.widget.layoutbox(s)
+    mylayoutbox[s]:buttons(awful.util.table.join(
                            awful.button({ }, 1, function () awful.layout.inc( 1) end),
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
+    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    mywibox[s] = awful.wibar({ position = "top", screen = s })
 
     -- Add widgets to the wibox
-    s.mywibox:setup {
+    mywibox[s]:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
             mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
+            mytaglist[s],
+            mypromptbox[s],
         },
-        s.mytasklist, -- Middle widget
+        mytasklist[s], -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
-            s.mylayoutbox,
+            mylayoutbox[s],
         },
     }
 end)
@@ -370,17 +375,15 @@ globalkeys = awful.util.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
+    awful.key({ modkey },            "r",     function () mypromptbox[awful.screen.focused()]:run() end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "x",
               function ()
-                  awful.prompt.run {
-                    prompt       = "Run Lua code: ",
-                    textbox      = awful.screen.focused().mypromptbox.widget,
-                    exe_callback = awful.util.eval,
-                    history_path = awful.util.get_cache_dir() .. "/history_eval"
-                  }
+                  awful.prompt.run({ prompt = "Run Lua code: " },
+                  mypromptbox[awful.screen.focused()].widget,
+                  awful.util.eval, nil,
+                  awful.util.get_cache_dir() .. "/history_eval")
               end,
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
@@ -623,11 +626,13 @@ memwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10,0 }, stops = {
                     {1, "#FF5656"}}})
 -- Register widget
 vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
-awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1280x1024 --left-of HDMI1")
--- awful.util.spawn_with_shell("synergys")
--- awful.util.spawn_with_shell("mate-volume-control-applet")
-awful.util.spawn_with_shell("volti ")
+awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1680x1050 --left-of HDMI1 --mode 1280x1024")
+awful.util.spawn_with_shell("synergys")
+awful.util.spawn_with_shell("mate-volume-control-applet")
+-- awful.util.spawn_with_shell("xinput set-button-map 8 1 6 3 4 5 2 7 8 9")
+-- awful.util.spawn_with_shell("altyo -f --id=org.gtk.altyo.main")
 -- awful.util.spawn_with_shell("dropboxd")
 -- awful.util.spawn_with_shell("owncloud")
 -- awful.util.spawn_with_shell("emacs --daemon")
+-- awful.util.spawn_with_shell(terminal, 1)
 -- awful.util.spawn_with_shell("sleep 30s; pidgin", 9)

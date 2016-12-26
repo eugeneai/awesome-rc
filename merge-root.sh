@@ -7,8 +7,10 @@ git checkout main
 cp -f $OUT ./
 git commit -m "Update from awesome distro config." -a
 git checkout master
-git merge main -m "Merge with awesome distro config."
-git mergetool --tool=meld
+git show main:./rc.lua > rc-main.lua
+meld rc.lua rc-main.lua
+#git merge main -m "Merge with awesome distro config."
+#git mergetool --tool=meld
 git rm -f *.orig
 git commit -a
 git push origin master
