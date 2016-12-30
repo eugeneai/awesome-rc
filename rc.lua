@@ -624,7 +624,7 @@ memwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10,0 }, stops = {
 -- Register widget
 vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
 -- awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1680x1050 --left-of HDMI1 --mode 1280x1024")
-awful.util.spawn_with_shell("xrandr --output VGA-1 --left-of HDMI-1")
+awful.util.spawn_with_shell("xrandr --output VGA-0 --left-of HDMI-0")
 awful.util.spawn_with_shell("synergys")
 awful.util.spawn_with_shell("mate-volume-control-applet")
 -- awful.util.spawn_with_shell("xinput set-button-map 8 1 6 3 4 5 2 7 8 9")
