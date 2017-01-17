@@ -44,23 +44,21 @@ beautiful.init(awful.util.get_themes_dir() .. "default/theme.lua")
 -- theme.wallpaper = "/home/eugeneai/code-wallpaper.jpeg"
 -- theme.wallpaper = "/home/eugeneai/code-wallpaper-15.jpg"
 -- This is used later as the default terminal and editor to run.
--- terminal = "lxterminal"
-terminal = "terminator"
--- terminal = "gnome-terminal"
--- terminal = "tilda"
--- terminal = "guake"
 -- browser  = "google-chrome-stable"
 browser  = "firefox"
 browser2  = "firefox-nightly"
 gbrowser  = "google-chrome-stable"
 qbrowser  = "qupzilla"
-editor = os.getenv("EDITOR") or "emacsclient -c --alternate-editor='emacs'" or "nano"
-filemanager = "pcmanfm"
--- editor_cmd = terminal .. " -e " .. editor
-editor_cmd = editor
-terminal_cmd = terminal .. " -e "
 vnc_cmd = "vncviewer"
 xkill_cmd = "xkill"
+filemanager = "pcmanfm"
+-- terminal = "lxterminal"
+-- terminal = "gnome-terminal"
+-- terminal = "tilda"
+-- terminal = "guake"
+terminal = "terminator"
+editor = "emacsclient -c -a emacs"
+editor_cmd = "qe"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -139,16 +137,16 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal - CR", terminal },
                                     { "browser - b", browser },
                                     { "browser - N", browser2 },
                                     { "chrome - g", gbrowser },
                                     { "q-zilla - q", qbrowser },
-                                    { "editor - e", editor_cmd},
+                                    { "editor - e", editor},
                                     { "vncviewer", vnc_cmd},
                                     { "file namager - i", filemanager},
                                     { "xkill", xkill_cmd},
-                                    { "htop", terminal_cmd .. "htop" }
+                                    { "htop", terminal .. "htop" },
+                                    { "open terminal", terminal }
                                   }
                         })
 
@@ -421,7 +419,7 @@ clientkeys = awful.util.table.join(
 )
 
 -- Bind all key numbers to tags.
--- Be careful: we use keycodes to make it works on any keyboard layout.
+-- Be careful: we use keycodes to make it work on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
 for i = 1, 9 do
     globalkeys = awful.util.table.join(globalkeys,
