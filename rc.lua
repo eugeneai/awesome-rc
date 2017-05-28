@@ -48,15 +48,14 @@ beautiful.init(awful.util.get_themes_dir() .. "default/theme.lua")
 -- This is used later as the default terminal and editor to run.
 
 -- browser  = "google-chrome-stable"
-browser  = "firefox"
-browser2  = "firefox-nightly"
+browser  = "cyberfox"
+browser2  = "firefox"
 gbrowser  = "google-chrome-stable"
 qbrowser  = "qupzilla"
-editor = os.getenv("EDITOR") or "emacsclient -c --alternate-editor='emacs'"
+-- editor = os.getenv("EDITOR") or "emacsclient -c --alternate-editor='emacs'"
 filemanager = "pcmanfm"
 -- editor_cmd = terminal .. " -e " .. editor
-editor_cmd = editor
-terminal_cmd = terminal .. " -e "
+--editor_cmd = editor
 vnc_cmd = "vncviewer"
 xkill_cmd = "xkill"
 filemanager = "pcmanfm"
@@ -65,6 +64,7 @@ filemanager = "pcmanfm"
 -- terminal = "tilda"
 -- terminal = "guake"
 terminal = "terminator"
+terminal_cmd = terminal .. " -e "
 editor = "emacsclient -c -a emacs"
 editor_cmd = "emacs -nw -q --load ~/.emacs.d/q.el"
 
@@ -630,11 +630,11 @@ memwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10,0 }, stops = {
                     {1, "#FF5656"}}})
 -- Register widget
 vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
--- awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1680x1050 --left-of HDMI1 
+-- awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1680x1050 --left-of HDMI1
 --mode 1280x1024")
 awful.util.spawn_with_shell("xrandr --output VGA1 --left-of HDMI1")
 awful.util.spawn_with_shell("synergys")
-awful.util.spawn_with_shell("mate-volume-control-applet")
+awful.util.spawn_with_shell("volumeicon")
 -- awful.util.spawn_with_shell("xinput set-button-map 8 1 6 3 4 5 2 7 8 9")
 -- awful.util.spawn_with_shell("altyo -f --id=org.gtk.altyo.main")
 -- awful.util.spawn_with_shell("dropboxd")
