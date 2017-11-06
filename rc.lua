@@ -345,6 +345,8 @@ globalkeys = gears.table.join(
 
     awful.key({ modkey,           }, "g", function () awful.util.spawn(gbrowser) end,
        {description = "open Google Chrome", group = "launcher"}),
+    awful.key({ modkey,           }, "q", function () awful.util.spawn(qbrowser) end,
+       {description = "open Qupzilla", group = "launcher"}),
     awful.key({ modkey,           }, "b", function () awful.util.spawn(browser) end,
        {description = "open browser", group = "launcher"}),
     awful.key({ modkey,           }, "e", function () awful.util.spawn(editor) end,
