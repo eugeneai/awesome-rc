@@ -51,8 +51,8 @@ beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 -- theme.wallpaper = "/home/eugeneai/code-wallpaper-15.jpg"
 -- This is used later as the default terminal and editor to run.
 -- browser  = "google-chrome-stable"
-browser  = "cyberfox"
-browser2  = "firefox"
+cyberfox  = "cyberfox"
+firefox  = "firefox"
 gbrowser  = "google-chrome-stable"
 qbrowser  = "qupzilla"
 -- editor = os.getenv("EDITOR") or "emacsclient -c --alternate-editor='emacs'"
@@ -149,8 +149,8 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "browser - b", browser },
-                                    { "browser - N", browser2 },
+                                    { "firefox - b", firefox },
+                                    { "cyberfox - B", cyberfox },
                                     { "chrome - g", gbrowser },
                                     { "q-zilla - q", qbrowser },
                                     { "editor - e", editor},
@@ -347,7 +347,9 @@ globalkeys = gears.table.join(
        {description = "open Google Chrome", group = "launcher"}),
     awful.key({ modkey,           }, "q", function () awful.util.spawn(qbrowser) end,
        {description = "open Qupzilla", group = "launcher"}),
-    awful.key({ modkey,           }, "b", function () awful.util.spawn(browser) end,
+    awful.key({ modkey,           }, "b", function () awful.util.spawn(firefox) end,
+       {description = "open browser", group = "launcher"}),
+    awful.key({ modkey, "Shift"   }, "b", function () awful.util.spawn(cyberfox) end,
        {description = "open browser", group = "launcher"}),
     awful.key({ modkey,           }, "e", function () awful.util.spawn(editor) end,
        {description = "open editor", group = "launcher"}),
