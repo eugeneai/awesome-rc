@@ -47,9 +47,10 @@ end
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
--- theme.wallpaper = "/home/eugeneai/the_code.png"
--- theme.wallpaper = "/home/eugeneai/code-wallpaper.jpeg"
--- theme.wallpaper = "/home/eugeneai/code-wallpaper-15.jpg"
+beautiful.wallpaper = "/home/eugeneai/Pictures/Wallpapers/city-in-red.jpg"
+-- beautiful.wallpaper = "/home/eugeneai/code-wallpaper.jpeg"
+-- beautiful.wallpaper = "/home/eugeneai/code-wallpaper-15.jpg"
+
 -- This is used later as the default terminal and editor to run.
 -- browser  = "google-chrome-stable"
 cyberfox  = "cyberfox"
@@ -224,6 +225,7 @@ local function set_wallpaper(s)
             wallpaper = wallpaper(s)
         end
         gears.wallpaper.maximized(wallpaper, s, true)
+        -- gears.wallpaper.set("#ff0000")
     end
 end
 
@@ -676,3 +678,4 @@ awful.util.spawn_with_shell("volumeicon")
 -- awful.util.spawn_with_shell("emacs --daemon")
 -- awful.util.spawn_with_shell(terminal, 1)
 -- awful.util.spawn_with_shell("sleep 30s; pidgin", 9)
+-- gears.wallpaper.set("#ff0000")
