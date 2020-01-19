@@ -27,37 +27,17 @@ naughty.connect_signal("request::display_error", function(message, startup)
         title   = "Oops, an error happened"..(startup and " during startup!" or "!"),
         message = message
     }
-    end)
+end)
 -- }}}
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
-beautiful.wallpaper = "/home/eugeneai/Pictures/Wallpapers/city-in-red.jpg"
--- beautiful.wallpaper = "/home/eugeneai/code-wallpaper.jpeg"
--- beautiful.wallpaper = "/home/eugeneai/code-wallpaper-15.jpg"
-
 -- This is used later as the default terminal and editor to run.
-cyberfox  = "cyberfox"
-firefox  = "firefox"
-gbrowser  = "google-chrome-stable"
-qbrowser  = "qupzilla"
--- editor = os.getenv("EDITOR") or "emacsclient -c --alternate-editor='emacs'"
-filemanager = "pcmanfm"
--- editor_cmd = terminal .. " -e " .. editor
---editor_cmd = editor
-vnc_cmd = "vncviewer"
-xkill_cmd = "xkill"
-filemanager = "pcmanfm"
--- terminal = "lxterminal"
--- terminal = "gnome-terminal"
--- terminal = "tilda"
--- terminal = "guake"
-terminal = "terminator"
-terminal_cmd = terminal .. " -e "
-editor = "emacsclient -c -a emacs" or "nano"
-editor_cmd = "emacs -nw -q --load ~/.emacs.d/q.el"
+terminal = "xterm"
+editor = os.getenv("EDITOR") or "nano"
+editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -65,19 +45,6 @@ editor_cmd = "emacs -nw -q --load ~/.emacs.d/q.el"
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
--- Keyboard map indicator and changer
-kbdcfg = {}
-kbdcfg.cmd = "setxkbmap"
-kbdcfg.layout = { { "us", "" }, { "ru", "" } }
-kbdcfg.current = 1  -- us is our default layout
-kbdcfg.widget = wibox.widget.textbox()
-kbdcfg.widget:set_text(" " .. kbdcfg.layout[kbdcfg.current][1] .. " ")
-kbdcfg.switch = function ()
-  kbdcfg.current = kbdcfg.current % #(kbdcfg.layout) + 1
-  local t = kbdcfg.layout[kbdcfg.current]
-  kbdcfg.widget:set_text(" " .. t[1] .. " ")
-  os.execute( kbdcfg.cmd .. " " .. t[1] .. ",us " .. t[2] )
-end
 -- }}}
 
 -- {{{ Menu
@@ -91,15 +58,6 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "firefox - b", firefox },
-                                    { "cyberfox - B", cyberfox },
-                                    { "chrome - g", gbrowser },
-                                    { "q-zilla - q", qbrowser },
-                                    { "editor - e", editor},
-                                    { "vncviewer", vnc_cmd},
-                                    { "file namager - i", filemanager},
-                                    { "xkill", xkill_cmd},
-                                    { "htop", terminal .. "htop" },
                                     { "open terminal", terminal }
                                   }
                         })
@@ -115,24 +73,19 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Table of layouts to cover with awful.layout.inc, order matters.
 tag.connect_signal("request::default_layouts", function()
     awful.layout.append_default_layouts({
-        awful.layout.suit.max,
         awful.layout.suit.floating,
         awful.layout.suit.tile,
         awful.layout.suit.tile.left,
-        awful.layout.suit.corner.nw,
-        -- awful.layout.suit.tile.bottom,
-        -- awful.layout.suit.tile.top,
-        -- awful.layout.suit.fair,
-        -- awful.layout.suit.fair.horizontal,
-        -- awful.layout.suit.spiral,
-        -- awful.layout.suit.spiral.dwindle,
-        awful.layout.suit.magnifier,
+        awful.layout.suit.tile.bottom,
+        awful.layout.suit.tile.top,
+        awful.layout.suit.fair,
+        awful.layout.suit.fair.horizontal,
+        awful.layout.suit.spiral,
+        awful.layout.suit.spiral.dwindle,
+        awful.layout.suit.max,
         awful.layout.suit.max.fullscreen,
-        -- awful.layout.suit.corner.nw,
-        -- awful.layout.suit.corner.ne,
-        -- awful.layout.suit.corner.sw,
-        -- awful.layout.suit.corner.se,
-        -- awful.layout.suit.magnifier,    
+        awful.layout.suit.magnifier,
+        awful.layout.suit.corner.nw,
     })
 end)
 -- }}}
@@ -169,9 +122,9 @@ screen.connect_signal("request::desktop_decoration", function(s)
     s.mylayoutbox = awful.widget.layoutbox {
         screen  = s,
         buttons = {
-                           awful.button({ }, 1, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 3, function () awful.layout.inc(-1) end),
-                           awful.button({ }, 4, function () awful.layout.inc( 1) end),
+            awful.button({ }, 1, function () awful.layout.inc( 1) end),
+            awful.button({ }, 3, function () awful.layout.inc(-1) end),
+            awful.button({ }, 4, function () awful.layout.inc( 1) end),
             awful.button({ }, 5, function () awful.layout.inc(-1) end),
         }
     }
@@ -205,7 +158,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
         buttons = {
             awful.button({ }, 1, function (c)
                 c:activate { context = "tasklist", action = "toggle_minimization" }
-                                 end),
+            end),
             awful.button({ }, 3, function() awful.menu.client_list { theme = { width = 250 } } end),
             awful.button({ }, 4, function() awful.client.focus.byidx( 1) end),
             awful.button({ }, 5, function() awful.client.focus.byidx(-1) end),
@@ -359,8 +312,8 @@ awful.keyboard.append_global_keybindings({
             local tag = screen.tags[index]
             if tag then
                 tag:view_only()
-                  end
-              end,
+            end
+        end,
     },
     awful.key {
         modifiers   = { modkey, "Control" },
@@ -373,7 +326,7 @@ awful.keyboard.append_global_keybindings({
             if tag then
                 awful.tag.viewtoggle(tag)
             end
-              end,
+        end,
     },
     awful.key {
         modifiers = { modkey, "Shift" },
@@ -421,49 +374,49 @@ end)
 
 client.connect_signal("request::default_keybindings", function()
     awful.keyboard.append_client_keybindings({
-    awful.key({ modkey,           }, "f",
-        function (c)
-            c.fullscreen = not c.fullscreen
-            c:raise()
-        end,
-        {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
-              {description = "close", group = "client"}),
-    awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
-              {description = "toggle floating", group = "client"}),
-    awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
-              {description = "move to master", group = "client"}),
-    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
-              {description = "move to screen", group = "client"}),
-    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
-              {description = "toggle keep on top", group = "client"}),
-    awful.key({ modkey,           }, "n",
-        function (c)
-            -- The client currently has the input focus, so it cannot be
-            -- minimized, since minimized clients can't have the focus.
-            c.minimized = true
-        end ,
-        {description = "minimize", group = "client"}),
-    awful.key({ modkey,           }, "m",
-        function (c)
-            c.maximized = not c.maximized
-            c:raise()
-        end ,
-        {description = "(un)maximize", group = "client"}),
-    awful.key({ modkey, "Control" }, "m",
-        function (c)
-            c.maximized_vertical = not c.maximized_vertical
-            c:raise()
-        end ,
-        {description = "(un)maximize vertically", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "m",
-        function (c)
-            c.maximized_horizontal = not c.maximized_horizontal
-            c:raise()
-        end ,
+        awful.key({ modkey,           }, "f",
+            function (c)
+                c.fullscreen = not c.fullscreen
+                c:raise()
+            end,
+            {description = "toggle fullscreen", group = "client"}),
+        awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+                {description = "close", group = "client"}),
+        awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
+                {description = "toggle floating", group = "client"}),
+        awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
+                {description = "move to master", group = "client"}),
+        awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
+                {description = "move to screen", group = "client"}),
+        awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
+                {description = "toggle keep on top", group = "client"}),
+        awful.key({ modkey,           }, "n",
+            function (c)
+                -- The client currently has the input focus, so it cannot be
+                -- minimized, since minimized clients can't have the focus.
+                c.minimized = true
+            end ,
+            {description = "minimize", group = "client"}),
+        awful.key({ modkey,           }, "m",
+            function (c)
+                c.maximized = not c.maximized
+                c:raise()
+            end ,
+            {description = "(un)maximize", group = "client"}),
+        awful.key({ modkey, "Control" }, "m",
+            function (c)
+                c.maximized_vertical = not c.maximized_vertical
+                c:raise()
+            end ,
+            {description = "(un)maximize vertically", group = "client"}),
+        awful.key({ modkey, "Shift"   }, "m",
+            function (c)
+                c.maximized_horizontal = not c.maximized_horizontal
+                c:raise()
+            end ,
             {description = "(un)maximize horizontally", group = "client"}),
     })
-    end)
+end)
 
 -- }}}
 
@@ -512,7 +465,7 @@ awful.rules.rules = {
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = false }
+      }, properties = { titlebars_enabled = true }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -559,49 +512,4 @@ client.connect_signal("request::titlebars", function(c)
         layout = wibox.layout.align.horizontal
     }
 end)
-
--- Enable sloppy focus, so that focus follows mouse.
-client.connect_signal("mouse::enter", function(c)
-    c:emit_signal("request::activate", "mouse_enter", {raise = false})
-end)
-
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
-vicious = require("vicious")
--- Initialize widget
-datewidget = wibox.widget.textbox()
--- Register widget
-vicious.register(datewidget, vicious.widgets.date, "%b %d, %R", 60)
-
--- Initialize widget
-memwidget = wibox.widget.textbox()
--- Register widget
-vicious.register(memwidget, vicious.widgets.mem, "$1% ($2MB/$3MB)", 13)
-
--- Initialize widget
-memwidget = awful.widget.progressbar()
--- Progressbar properties
-memwidget:set_width(8)
-memwidget:set_height(10)
-memwidget:set_vertical(true)
-memwidget:set_background_color("#494B4F")
-memwidget:set_border_color(nil)
-memwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10,0 }, stops = { {0, "#AECF96"}, {0.5, "#88A175"},
-                    {1, "#FF5656"}}})
--- Register widget
-vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
--- awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1680x1050 --left-of HDMI1 --mode 1280x1024")
-awful.util.spawn_with_shell("xrandr --output VGA-0 --left-of HDMI-0")
--- awful.util.spawn_with_shell("xrandr --output VGA1 --left-of HDMI1")
--- awful.util.spawn_with_shell("synergys")
--- awful.util.spawn_with_shell("mate-volume-control-applet")
-awful.util.spawn_with_shell("volumeicon")
--- awful.util.spawn_with_shell("xinput set-button-map 8 1 6 3 4 5 2 7 8 9")
--- awful.util.spawn_with_shell("altyo -f --id=org.gtk.altyo.main")
--- awful.util.spawn_with_shell("dropboxd")
--- awful.util.spawn_with_shell("owncloud")
--- awful.util.spawn_with_shell("emacs --daemon")
--- awful.util.spawn_with_shell(terminal, 1)
--- awful.util.spawn_with_shell("sleep 30s; pidgin", 9)
--- gears.wallpaper.set("#ff0000")
