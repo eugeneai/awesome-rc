@@ -573,6 +573,7 @@ client.connect_signal("request::titlebars", function(c)
     }
 end)
 -- }}}
+
 vicious = require("vicious")
 -- Initialize widget
 datewidget = wibox.widget.textbox()
