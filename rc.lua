@@ -133,7 +133,7 @@ tag.connect_signal("request::default_layouts", function()
         -- awful.layout.suit.corner.ne,
         -- awful.layout.suit.corner.sw,
         -- awful.layout.suit.corner.se,
-        -- awful.layout.suit.magnifier,    
+        -- awful.layout.suit.magnifier,
     })
 end)
 -- }}}
@@ -273,6 +273,18 @@ awful.keyboard.append_global_keybindings({
               {description = "run prompt", group = "launcher"}),
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
+    awful.key({ modkey,           }, "g", function () awful.spawn(gbrowser) end,
+              {description = "open Google Chrome", group = "launcher"}),
+    awful.key({ modkey,           }, "q", function () awful.spawn(qbrowser) end,
+              {description = "open Qupzilla", group = "launcher"}),
+    awful.key({ modkey,           }, "b", function () awful.spawn(firefox) end,
+              {description = "open browser", group = "launcher"}),
+    awful.key({ modkey, "Shift"   }, "b", function () awful.spawn(cyberfox) end,
+              {description = "open browser", group = "launcher"}),
+    awful.key({ modkey,           }, "e", function () awful.spawn(editor) end,
+              {description = "open editor", group = "launcher"}),
+    awful.key({ modkey,           }, "i", function () awful.spawn(filemanager) end,
+              {description = "open filemanager", group = "launcher"}),
 })
 
 -- Tags related keybindings
