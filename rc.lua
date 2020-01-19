@@ -66,30 +66,6 @@ editor_cmd = "emacs -nw -q --load ~/.emacs.d/q.el"
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
-
--- Table of layouts to cover with awful.layout.inc, order matters.
-awful.layout.layouts = {
-    awful.layout.suit.max,
-    awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-
-    awful.layout.suit.corner.nw,
-    -- awful.layout.suit.tile.bottom,
-    -- awful.layout.suit.tile.top,
-    -- awful.layout.suit.fair,
-    -- awful.layout.suit.fair.horizontal,
-    -- awful.layout.suit.spiral,
-    -- awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.magnifier,
-    awful.layout.suit.max.fullscreen,
-    -- awful.layout.suit.corner.nw,
-    -- awful.layout.suit.corner.ne,
-    -- awful.layout.suit.corner.sw,
-    -- awful.layout.suit.corner.se,
-    -- awful.layout.suit.magnifier,
-}
--- }}}
 -- Keyboard map indicator and changer
 kbdcfg = {}
 kbdcfg.cmd = "setxkbmap"
@@ -102,29 +78,6 @@ kbdcfg.switch = function ()
   local t = kbdcfg.layout[kbdcfg.current]
   kbdcfg.widget:set_text(" " .. t[1] .. " ")
   os.execute( kbdcfg.cmd .. " " .. t[1] .. ",us " .. t[2] )
-end
-
- -- Mouse bindings
-kbdcfg.widget:buttons(
-  awful.util.table.join(awful.button({ }, 1, function () kbdcfg.switch() end))
-)
-
--- Alt + Right Shift switches the current keyboard layout
--- awful.key({ "Mod1" }, "Shift_L", function () kbdcfg.switch() end)
--- awful.key({ "Mod2" }, "Shift_R", function () kbdcfg.switch() end)
-
--- {{{ Helper functions
-local function client_menu_toggle_fn()
-    local instance = nil
-
-    return function ()
-        if instance and instance.wibox.visible then
-            instance:hide()
-            instance = nil
-        else
-            instance = awful.menu.clients({ theme = { width = 250 } })
-        end
-    end
 end
 -- }}}
 
@@ -159,52 +112,39 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
+-- {{{ Tag
+-- Table of layouts to cover with awful.layout.inc, order matters.
+tag.connect_signal("request::default_layouts", function()
+    awful.layout.append_default_layouts({
+        awful.layout.suit.max,
+        awful.layout.suit.floating,
+        awful.layout.suit.tile,
+        awful.layout.suit.tile.left,
+        awful.layout.suit.corner.nw,
+        -- awful.layout.suit.tile.bottom,
+        -- awful.layout.suit.tile.top,
+        -- awful.layout.suit.fair,
+        -- awful.layout.suit.fair.horizontal,
+        -- awful.layout.suit.spiral,
+        -- awful.layout.suit.spiral.dwindle,
+        awful.layout.suit.magnifier,
+        awful.layout.suit.max.fullscreen,
+        -- awful.layout.suit.corner.nw,
+        -- awful.layout.suit.corner.ne,
+        -- awful.layout.suit.corner.sw,
+        -- awful.layout.suit.corner.se,
+        -- awful.layout.suit.magnifier,    
+    })
+end)
+-- }}}
+
+-- {{{ Wibar
+
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
 
--- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
-
--- Create a wibox for each screen and add it
-local taglist_buttons = gears.table.join(
-                    awful.button({ }, 1, function(t) t:view_only() end),
-                    awful.button({ modkey }, 1, function(t)
-                                              if client.focus then
-                                                  client.focus:move_to_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 3, awful.tag.viewtoggle),
-                    awful.button({ modkey }, 3, function(t)
-                                              if client.focus then
-                                                  client.focus:toggle_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
-                )
-
-local tasklist_buttons = gears.table.join(
-                     awful.button({ }, 1, function (c)
-                                              if c == client.focus then
-                                                  c.minimized = true
-                                              else
-                                                  c:emit_signal(
-                                                      "request::activate",
-                                                      "tasklist",
-                                                      {raise = true}
-                                                  )
-                                              end
-                                          end),
-                     awful.button({ }, 3, function()
-                                              awful.menu.client_list({ theme = { width = 250 } })
-                                          end),
-                     awful.button({ }, 4, function ()
-                                              awful.client.focus.byidx(1)
-                                          end),
-                     awful.button({ }, 5, function ()
-                                              awful.client.focus.byidx(-1)
-                                          end))
 
 screen.connect_signal("request::wallpaper", function(s)
     -- Wallpaper
@@ -265,15 +205,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
         filter  = awful.widget.tasklist.filter.currenttags,
         buttons = {
             awful.button({ }, 1, function (c)
-                                     if c == client.focus then
-                                         c.minimized = true
-                                     else
-                                         c:emit_signal(
-                                             "request::activate",
-                                             "tasklist",
-                                             {raise = true}
-                                         )
-                                     end
+                c:activate { context = "tasklist", action = "toggle_minimization" }
                                  end),
             awful.button({ }, 3, function() awful.menu.client_list { theme = { width = 250 } } end),
             awful.button({ }, 4, function() awful.client.focus.byidx( 1) end),
@@ -384,9 +316,7 @@ awful.keyboard.append_global_keybindings({
                   local c = awful.client.restore()
                   -- Focus restored client
                   if c then
-                    c:emit_signal(
-                        "request::activate", "key.unminimize", {raise = true}
-                    )
+                    c:activate { raise = true, context = "key.unminimize" }
                   end
               end,
               {description = "restore minimized", group = "client"}),
@@ -479,15 +409,13 @@ awful.keyboard.append_global_keybindings({
 client.connect_signal("request::default_mousebindings", function()
     awful.mouse.append_client_mousebindings({
         awful.button({ }, 1, function (c)
-            c:emit_signal("request::activate", "mouse_click", {raise = true})
+            c:activate { context = "mouse_click" }
         end),
         awful.button({ modkey }, 1, function (c)
-            c:emit_signal("request::activate", "mouse_click", {raise = true})
-            awful.mouse.client.move(c)
+            c:activate { context = "mouse_click", action = "mouse_move"  }
         end),
         awful.button({ modkey }, 3, function (c)
-            c:emit_signal("request::activate", "mouse_click", {raise = true})
-            awful.mouse.client.resize(c)
+            c:activate { context = "mouse_click", action = "mouse_resize"}
         end),
     })
 end)
@@ -541,13 +469,11 @@ client.connect_signal("request::default_keybindings", function()
 -- }}}
 
 -- {{{ Rules
--- Rules to apply to new clients (through the "manage" signal).
+-- Rules to apply to new clients.
 awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
-      properties = { border_width = beautiful.border_width,
-                     border_color = beautiful.border_normal,
-                     focus = awful.client.focus.filter,
+      properties = { focus = awful.client.focus.filter,
                      raise = true,
                      screen = awful.screen.preferred,
                      placement = awful.placement.no_overlap+awful.placement.no_offscreen
@@ -596,32 +522,16 @@ awful.rules.rules = {
 }
 -- }}}
 
--- {{{ Signals
--- Signal function to execute when a new client appears.
-client.connect_signal("manage", function (c)
-    -- Set the windows at the slave,
-    -- i.e. put it at the end of others instead of setting it master.
-    -- if not awesome.startup then awful.client.setslave(c) end
-
-    if awesome.startup
-      and not c.size_hints.user_position
-      and not c.size_hints.program_position then
-        -- Prevent clients from being unreachable after screen count changes.
-        awful.placement.no_offscreen(c)
-    end
-end)
-
+-- {{{ Titlebars
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
     local buttons = {
         awful.button({ }, 1, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.move(c)
+            c:activate { context = "titlebar", action = "mouse_move"  }
         end),
         awful.button({ }, 3, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.resize(c)
+            c:activate { context = "titlebar", action = "mouse_resize"}
         end),
     }
 
