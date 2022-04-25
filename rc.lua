@@ -21,6 +21,12 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- Add lain layouts
+
+local lain = require("lain")
+
+
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -35,6 +41,7 @@ end)
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
+-- beautiful.init(gears.filesystem.get_configuration_dir() .. "theme.lua")
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 beautiful.wallpaper = "/home/eugeneai/Pictures/Wallpapers/city-in-red.jpg"
@@ -119,23 +126,24 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Table of layouts to cover with awful.layout.inc, order matters.
 tag.connect_signal("request::default_layouts", function()
     awful.layout.append_default_layouts({
+        lain.layout.centerwork,
         awful.layout.suit.floating,
-        awful.layout.suit.max,
-        awful.layout.suit.tile,
-        awful.layout.suit.tile.left,
-        awful.layout.suit.corner.nw,
-        awful.layout.suit.magnifier,
-        awful.layout.suit.corner.ne,
-        awful.layout.suit.corner.sw,
-        awful.layout.suit.corner.se,
-        awful.layout.suit.magnifier,
-        awful.layout.suit.tile.bottom,
-        awful.layout.suit.tile.top,
-        awful.layout.suit.fair,
-        awful.layout.suit.fair.horizontal,
-        awful.layout.suit.spiral,
-        awful.layout.suit.spiral.dwindle,
-        awful.layout.suit.max.fullscreen,
+        lain.layout.termfair,
+        -- awful.layout.suit.max,
+        -- awful.layout.suit.tile,
+        -- awful.layout.suit.tile.left,
+        -- awful.layout.suit.corner.nw,
+        -- awful.layout.suit.magnifier,
+        -- awful.layout.suit.corner.ne,
+        -- awful.layout.suit.corner.sw,
+        -- awful.layout.suit.corner.se,
+        -- awful.layout.suit.tile.bottom,
+        -- awful.layout.suit.tile.top,
+        -- awful.layout.suit.fair,
+        -- awful.layout.suit.fair.horizontal,
+        -- awful.layout.suit.spiral,
+        -- awful.layout.suit.spiral.dwindle,
+        -- awful.layout.suit.max.fullscreen,
     })
 end)
 -- }}}
@@ -640,6 +648,8 @@ vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
 -- awful.util.spawn_with_shell("synergys")
 -- awful.util.spawn_with_shell("mate-volume-control-applet")
 awful.util.spawn_with_shell("volumeicon")
+awful.util.spawn_with_shell("alsactl init")
+awful.util.spawn_with_shell("nvidia-settings -l")
 -- awful.util.spawn_with_shell("xinput set-button-map 8 1 6 3 4 5 2 7 8 9")
 -- awful.util.spawn_with_shell("altyo -f --id=org.gtk.altyo.main")
 -- awful.util.spawn_with_shell("dropboxd")
