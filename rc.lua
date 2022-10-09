@@ -21,6 +21,8 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- Add lain layouts
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -35,12 +37,35 @@ end)
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+-- beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+
+-- beautiful.wallpaper = "/home/eugeneai/Pictures/Wallpapers/city-in-red.jpg"
+-- beautiful.wallpaper = "/home/eugeneai/code-wallpaper.jpeg"
+-- beautiful.wallpaper = "/home/eugeneai/code-wallpaper-15.jpg"
+-- beautiful.init(beautiful.wallpaper)
+-- beautiful.init("/home/eugeneai/Pictures/Wallpapers/city-in-red.jpg")
+beautiful.init("/home/USER/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "xterm"
-editor = os.getenv("EDITOR") or "nano"
-editor_cmd = terminal .. " -e " .. editor
+cyberfox  = "cyberfox"
+firefox  = "firefox"
+gbrowser  = "google-chrome-stable"
+qbrowser  = "qupzilla"
+-- editor = os.getenv("EDITOR") or "emacsclient -c --alternate-editor='emacs'" or "nano"
+filemanager = "pcmanfm"
+-- editor_cmd = terminal .. " -e " .. editor
+--editor_cmd = editor
+vnc_cmd = "vncviewer"
+xkill_cmd = "xkill"
+filemanager = "pcmanfm"
+-- terminal = "lxterminal"
+-- terminal = "gnome-terminal"
+-- terminal = "tilda"
+-- terminal = "guake"
+terminal = "terminator"
+terminal_cmd = terminal .. " -e "
+editor = "emacsclient -c -a emacs" or "nano"
+editor_cmd = "emacs -nw -q --load ~/.emacs.d/q.el"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -49,6 +74,20 @@ editor_cmd = terminal .. " -e " .. editor
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
 -- }}}
+
+-- Keyboard map indicator and changer
+kbdcfg = {}
+kbdcfg.cmd = "setxkbmap"
+kbdcfg.layout = { { "us", "" }, { "ru", "" } }
+kbdcfg.current = 1  -- us is our default layout
+kbdcfg.widget = wibox.widget.textbox()
+kbdcfg.widget:set_text(" " .. kbdcfg.layout[kbdcfg.current][1] .. " ")
+kbdcfg.switch = function ()
+  kbdcfg.current = kbdcfg.current % #(kbdcfg.layout) + 1
+  local t = kbdcfg.layout[kbdcfg.current]
+  kbdcfg.widget:set_text(" " .. t[1] .. " ")
+  os.execute( kbdcfg.cmd .. " " .. t[1] .. ",us " .. t[2] )
+end
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
@@ -61,6 +100,15 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+                                    { "firefox - b", firefox },
+                                    { "cyberfox - B", cyberfox },
+                                    { "chrome - g", gbrowser },
+                                    { "q-zilla - q", qbrowser },
+                                    { "editor - e", editor},
+                                    { "vncviewer", vnc_cmd},
+                                    { "file namager - i", filemanager},
+                                    { "xkill", xkill_cmd},
+                                    { "htop", terminal .. "htop" },
                                     { "open terminal", terminal }
                                   }
                         })
@@ -72,23 +120,29 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
+local lain = require("lain")
+
 -- {{{ Tag layout
 -- Table of layouts to cover with awful.layout.inc, order matters.
 tag.connect_signal("request::default_layouts", function()
     awful.layout.append_default_layouts({
         awful.layout.suit.floating,
-        awful.layout.suit.tile,
-        awful.layout.suit.tile.left,
-        awful.layout.suit.tile.bottom,
-        awful.layout.suit.tile.top,
-        awful.layout.suit.fair,
-        awful.layout.suit.fair.horizontal,
-        awful.layout.suit.spiral,
-        awful.layout.suit.spiral.dwindle,
-        awful.layout.suit.max,
-        awful.layout.suit.max.fullscreen,
-        awful.layout.suit.magnifier,
-        awful.layout.suit.corner.nw,
+        lain.layout.termfair,
+        -- awful.layout.suit.max,
+        -- awful.layout.suit.tile,
+        -- awful.layout.suit.tile.left,
+        -- awful.layout.suit.corner.nw,
+        -- awful.layout.suit.magnifier,
+        -- awful.layout.suit.corner.ne,
+        -- awful.layout.suit.corner.sw,
+        -- awful.layout.suit.corner.se,
+        -- awful.layout.suit.tile.bottom,
+        -- awful.layout.suit.tile.top,
+        -- awful.layout.suit.fair,
+        -- awful.layout.suit.fair.horizontal,
+        -- awful.layout.suit.spiral,
+        -- awful.layout.suit.spiral.dwindle,
+        -- awful.layout.suit.max.fullscreen,
     })
 end)
 -- }}}
@@ -196,7 +250,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 mytextclock,
                 s.mylayoutbox,
             },
-        }
+    }
     }
 end)
 
@@ -238,6 +292,18 @@ awful.keyboard.append_global_keybindings({
               {description = "run prompt", group = "launcher"}),
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
+    awful.key({ modkey,           }, "g", function () awful.spawn(gbrowser) end,
+              {description = "open Google Chrome", group = "launcher"}),
+    awful.key({ modkey,           }, "q", function () awful.spawn(qbrowser) end,
+              {description = "open Qupzilla", group = "launcher"}),
+    awful.key({ modkey,           }, "b", function () awful.spawn(firefox) end,
+              {description = "open browser", group = "launcher"}),
+    awful.key({ modkey, "Shift"   }, "b", function () awful.spawn(cyberfox) end,
+              {description = "open browser", group = "launcher"}),
+    awful.key({ modkey,           }, "e", function () awful.spawn(editor) end,
+              {description = "open editor", group = "launcher"}),
+    awful.key({ modkey,           }, "i", function () awful.spawn(filemanager) end,
+              {description = "open filemanager", group = "launcher"}),
 })
 
 -- Tags related keybindings
@@ -487,7 +553,7 @@ ruled.client.connect_signal("request::rules", function()
     ruled.client.append_rule {
         id         = "titlebars",
         rule_any   = { type = { "normal", "dialog" } },
-        properties = { titlebars_enabled = true      }
+        properties = { titlebars_enabled = false     }
     }
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -561,3 +627,43 @@ end)
 client.connect_signal("mouse::enter", function(c)
     c:activate { context = "mouse_enter", raise = false }
 end)
+
+vicious = require("vicious")
+-- Initialize widget
+datewidget = wibox.widget.textbox()
+-- Register widget
+vicious.register(datewidget, vicious.widgets.date, "%b %d, %R", 60)
+
+-- Initialize widget
+memwidget = wibox.widget.textbox()
+-- Register widget
+vicious.register(memwidget, vicious.widgets.mem, "$1% ($2MB/$3MB)", 13)
+
+-- Initialize widget
+memwidget = awful.widget.progressbar()
+-- Progressbar properties
+memwidget:set_width(8)
+memwidget:set_height(10)
+memwidget:set_vertical(true)
+memwidget:set_background_color("#494B4F")
+memwidget:set_border_color(nil)
+memwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10,0 }, stops = { {0, "#AECF96"}, {0.5, "#88A175"},
+                    {1, "#FF5656"}}})
+-- Register widget
+vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
+-- awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1680x1050 --left-of HDMI1 --mode 1280x1024")
+-- awful.util.spawn_with_shell("xrandr --output VGA-0 --left-of HDMI-0")
+-- awful.util.spawn_with_shell("xrandr --output VGA1 --left-of HDMI1")
+-- awful.util.spawn_with_shell("synergys")
+-- awful.util.spawn_with_shell("mate-volume-control-applet")
+awful.util.spawn_with_shell("volumeicon")
+awful.util.spawn_with_shell("alsactl init")
+awful.util.spawn_with_shell("nvidia-settings -l")
+-- awful.util.spawn_with_shell("xinput set-button-map 8 1 6 3 4 5 2 7 8 9")
+-- awful.util.spawn_with_shell("altyo -f --id=org.gtk.altyo.main")
+-- awful.util.spawn_with_shell("dropboxd")
+-- awful.util.spawn_with_shell("owncloud")
+-- awful.util.spawn_with_shell("emacs --daemon")
+-- awful.util.spawn_with_shell(terminal, 1)
+-- awful.util.spawn_with_shell("sleep 30s; pidgin", 9)
+-- gears.wallpaper.set("#ff0000")
