@@ -45,6 +45,7 @@ end)
 -- beautiful.init(beautiful.wallpaper)
 -- beautiful.init("/home/eugeneai/Pictures/Wallpapers/city-in-red.jpg")
 beautiful.init("/home/USER/.config/awesome/theme.lua")
+beautiful.master_width_factor=0.4
 
 -- This is used later as the default terminal and editor to run.
 cyberfox  = "cyberfox"
