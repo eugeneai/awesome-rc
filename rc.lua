@@ -37,21 +37,22 @@ end)
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
--- beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- beautiful.wallpaper = "/home/eugeneai/Pictures/Wallpapers/city-in-red.jpg"
 -- beautiful.wallpaper = "/home/eugeneai/code-wallpaper.jpeg"
 -- beautiful.wallpaper = "/home/eugeneai/code-wallpaper-15.jpg"
 -- beautiful.init(beautiful.wallpaper)
 -- beautiful.init("/home/eugeneai/Pictures/Wallpapers/city-in-red.jpg")
-beautiful.init("/home/USER/.config/awesome/theme.lua")
-beautiful.master_width_factor=0.4
+-- beautiful.init("/home/USER/.config/awesome/theme.lua")
+-- beautiful.master_width_factor=0.4
 
 -- This is used later as the default terminal and editor to run.
 cyberfox  = "cyberfox"
 firefox  = "firefox"
 gbrowser  = "google-chrome-stable"
 qbrowser  = "qupzilla"
+falkon = "falkon"
 -- editor = os.getenv("EDITOR") or "emacsclient -c --alternate-editor='emacs'" or "nano"
 filemanager = "pcmanfm"
 -- editor_cmd = terminal .. " -e " .. editor
@@ -101,10 +102,10 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "firefox - b", firefox },
-                                    { "cyberfox - B", cyberfox },
+                                    { "chrome - b", gbrowser },  -- firefox
+                                    { "firefox - B", firefox },
                                     { "chrome - g", gbrowser },
-                                    { "q-zilla - q", qbrowser },
+                                    { "falkon - q", falkon },
                                     { "editor - e", editor},
                                     { "vncviewer", vnc_cmd},
                                     { "file namager - i", filemanager},
@@ -140,9 +141,9 @@ tag.connect_signal("request::default_layouts", function()
         -- awful.layout.suit.corner.se,
         -- awful.layout.suit.tile.bottom,
         -- awful.layout.suit.tile.top,
-        -- awful.layout.suit.fair,
+        awful.layout.suit.fair,
         -- awful.layout.suit.fair.horizontal,
-        -- awful.layout.suit.spiral,
+        awful.layout.suit.spiral,
         -- awful.layout.suit.spiral.dwindle,
         -- awful.layout.suit.max.fullscreen,
     })
@@ -296,11 +297,11 @@ awful.keyboard.append_global_keybindings({
               {description = "show the menubar", group = "launcher"}),
     awful.key({ modkey,           }, "g", function () awful.spawn(gbrowser) end,
               {description = "open Google Chrome", group = "launcher"}),
-    awful.key({ modkey,           }, "q", function () awful.spawn(qbrowser) end,
+    awful.key({ modkey,           }, "q", function () awful.spawn(falkon) end,
               {description = "open Qupzilla", group = "launcher"}),
-    awful.key({ modkey,           }, "b", function () awful.spawn(firefox) end,
+    awful.key({ modkey,           }, "b", function () awful.spawn(gbrowser) end,
               {description = "open browser", group = "launcher"}),
-    awful.key({ modkey, "Shift"   }, "b", function () awful.spawn(cyberfox) end,
+    awful.key({ modkey, "Shift"   }, "b", function () awful.spawn() end,
               {description = "open browser", group = "launcher"}),
     awful.key({ modkey,           }, "e", function () awful.spawn(editor) end,
               {description = "open editor", group = "launcher"}),
@@ -660,6 +661,7 @@ vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
 -- awful.util.spawn_with_shell("mate-volume-control-applet")
 awful.util.spawn_with_shell("volumeicon")
 awful.util.spawn_with_shell("alsactl init")
+awful.util.spawn_with_shell("flameshot")
 awful.util.spawn_with_shell("nvidia-settings -l")
 -- awful.util.spawn_with_shell("xinput set-button-map 8 1 6 3 4 5 2 7 8 9")
 -- awful.util.spawn_with_shell("altyo -f --id=org.gtk.altyo.main")
