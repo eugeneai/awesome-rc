@@ -574,16 +574,16 @@ client.connect_signal("request::titlebars", function(c)
 end)
 -- }}}
 
-vicious = require("vicious")
+-- vicious = require("vicious")
 -- Initialize widget
-datewidget = wibox.widget.textbox()
+-- datewidget = wibox.widget.textbox()
 -- Register widget
-vicious.register(datewidget, vicious.widgets.date, "%b %d, %R", 60)
+-- vicious.register(datewidget, vicious.widgets.date, "%b %d, %R", 60)
 
 -- Initialize widget
 memwidget = wibox.widget.textbox()
 -- Register widget
-vicious.register(memwidget, vicious.widgets.mem, "$1% ($2MB/$3MB)", 13)
+-- vicious.register(memwidget, vicious.widgets.mem, "$1% ($2MB/$3MB)", 13)
 
 -- Initialize widget
 memwidget = awful.widget.progressbar()
@@ -596,7 +596,7 @@ memwidget:set_border_color(nil)
 memwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 10,0 }, stops = { {0, "#AECF96"}, {0.5, "#88A175"},
                     {1, "#FF5656"}}})
 -- Register widget
-vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
+-- vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
 -- awful.util.spawn_with_shell("xrandr --output VGA1 --mode 1680x1050 --left-of HDMI1 --mode 1280x1024")
 awful.util.spawn_with_shell("xrandr --output VGA-0 --left-of HDMI-0")
 -- awful.util.spawn_with_shell("xrandr --output VGA1 --left-of HDMI1")
@@ -610,4 +610,5 @@ awful.util.spawn_with_shell("volumeicon")
 -- awful.util.spawn_with_shell("emacs --daemon")
 -- awful.util.spawn_with_shell(terminal, 1)
 -- awful.util.spawn_with_shell("sleep 30s; pidgin", 9)
+awful.util.spawn_with_shell("nm-applet")
 -- gears.wallpaper.set("#ff0000")
